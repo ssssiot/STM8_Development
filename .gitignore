@@ -1,0 +1,5 @@
+*.chm
+*.pdf
+*.html
+*.*~
+Debug
