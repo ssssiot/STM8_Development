@@ -2087,10 +2087,10 @@
       <name>$PROJ_DIR$\main.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\soft_i2c.c</name>
+      <name>$PROJ_DIR$\SHT20.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\soft_i2c.h</name>
+      <name>$PROJ_DIR$\SHT20.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\stm8s_conf.h</name>
