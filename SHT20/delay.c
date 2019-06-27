@@ -27,8 +27,9 @@ void delay_us(u16 nus)
     "DECW X          \n" 
     "JRNE DELAY_XUS  \n"   
     "POP A           \n" 
-); 
+  ); 
 } 
+      
 void delay_ms(u32 nms)
 {
     u8 t;
@@ -39,5 +40,6 @@ void delay_ms(u32 nms)
             delay_us(65000);
         nms=nms%65;
     }
+    
     delay_us(nms*1000);
 }

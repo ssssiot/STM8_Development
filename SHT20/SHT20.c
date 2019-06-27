@@ -6,13 +6,6 @@
 
 SHT2x_PARAM g_sht2x_param;
 
-void SHT2x_Delay(unsigned int n)
-{
-    delay_us(n); 
-    delay_us(n);
-    delay_us(n);delay_us(n);delay_us(n);
-}
-
 void SHT2x_Init(void)
 { 
     GPIO_Init(SHT2x_I2C_PORT, SHT2x_SDA_PIN, GPIO_MODE_OUT_OD_HIZ_SLOW);
@@ -21,7 +14,7 @@ void SHT2x_Init(void)
     SHT2x_SCL_HIGH();
     SHT2x_SDA_HIGH();
     
-    SHT2x_Delay(80);
+    delay_us(80);
 
     SHT2x_SoftReset();
 }
@@ -58,9 +51,9 @@ void SHT2x_I2cStartCondition(void)
     SHT2x_SDA_HIGH();
     SHT2x_SCL_HIGH();
     SHT2x_SDA_LOW();
-    SHT2x_Delay(30);
+    delay_us(30);
     SHT2x_SCL_LOW();
-    SHT2x_Delay(30);
+    delay_us(30);
 }
 
 void SHT2x_I2cStopCondition(void)
@@ -71,9 +64,9 @@ void SHT2x_I2cStopCondition(void)
     SHT2x_SDA_LOW();
     SHT2x_SCL_LOW();
     SHT2x_SCL_HIGH();
-    SHT2x_Delay(30);
+    delay_us(30);
     SHT2x_SDA_HIGH();
-    SHT2x_Delay(30);
+    delay_us(30);
 }
 
 void SHT2x_I2cAcknowledge(void)
@@ -84,9 +77,9 @@ void SHT2x_I2cAcknowledge(void)
     SHT2x_SDA_LOW();
     
     SHT2x_SCL_HIGH();
-    SHT2x_Delay(8);
+    delay_us(8);
     SHT2x_SCL_LOW();   
-    SHT2x_Delay(8);
+    delay_us(8);
 }
 
 void SHT2x_I2cNoAcknowledge(void)
@@ -96,16 +89,14 @@ void SHT2x_I2cNoAcknowledge(void)
     SHT2x_SDA_HIGH();
     
     SHT2x_SCL_HIGH();
-    SHT2x_Delay(8);
+    delay_us(8);
     SHT2x_SCL_LOW();   
-    SHT2x_Delay(8);
+    delay_us(8);
 }
 
 unsigned char SHT2x_I2cReadByte(void)
 {
     unsigned char i, val = 0;
-
-    SHT2x_SDA_OUTPUT();
     
     SHT2x_SDA_INPUT();
         
@@ -115,7 +106,7 @@ unsigned char SHT2x_I2cReadByte(void)
         
         SHT2x_SCL_HIGH();   
         
-        if(SET == SHT2x_SDA_STATE()) 
+        if(RESET != SHT2x_SDA_STATE()) 
         {
             val |= 0x01;
         }
@@ -150,9 +141,9 @@ unsigned char SHT2x_I2cWriteByte(unsigned char byte)
         }
         
         SHT2x_SCL_HIGH();
-        SHT2x_Delay(20);
+        delay_us(20);
         SHT2x_SCL_LOW();   
-        SHT2x_Delay(20);
+        delay_us(20);
         
         byte <<= 1;
     }
@@ -184,7 +175,6 @@ float SHT2x_MeasureTempHM(void)
     float TEMP;
     unsigned char tmp1, tmp2;
     unsigned short ST;
-    
 
     SHT2x_SCL_OUTPUT();
     
@@ -199,12 +189,21 @@ float SHT2x_MeasureTempHM(void)
 
     while(RESET == SHT2x_SCL_STATE())
     {
-        SHT2x_Delay(20);
+        delay_us(20);
     }
     
+    UART1_SendData8('*');
+    while( UART1_GetFlagStatus(UART1_FLAG_TC)==RESET );
+    
     tmp1 = SHT2x_I2cReadByte();
+    UART1_SendData8((unsigned char)tmp1);
+    while( UART1_GetFlagStatus(UART1_FLAG_TC)==RESET );
     SHT2x_I2cAcknowledge();
+    
     tmp2 = SHT2x_I2cReadByte();
+    UART1_SendData8((unsigned char)tmp2);
+    while( UART1_GetFlagStatus(UART1_FLAG_TC)==RESET );
+    
     SHT2x_I2cNoAcknowledge();
     SHT2x_I2cStopCondition();
     
@@ -223,7 +222,6 @@ float SHT2x_MeasureHumiHM(void)
     unsigned char tmp1, tmp2;    
     unsigned short SRH;
 
-
     SHT2x_SCL_OUTPUT();
     
     SHT2x_I2cStartCondition();                               
@@ -238,14 +236,20 @@ float SHT2x_MeasureHumiHM(void)
 
     while(RESET == SHT2x_SCL_STATE())
     {
-        SHT2x_Delay(20);
+        delay_us(20);
     }
     
+    UART1_SendData8('#');
+    while( UART1_GetFlagStatus(UART1_FLAG_TC)==RESET );
+    
     tmp1 = SHT2x_I2cReadByte();
+    UART1_SendData8((unsigned char)tmp1);
+    while( UART1_GetFlagStatus(UART1_FLAG_TC)==RESET );
     SHT2x_I2cAcknowledge();
+    
     tmp2 = SHT2x_I2cReadByte();
-    SHT2x_I2cNoAcknowledge();
-    SHT2x_I2cStopCondition();
+    UART1_SendData8((unsigned char)tmp2);
+    while( UART1_GetFlagStatus(UART1_FLAG_TC)==RESET );
     
     SRH = (tmp1 << 8) | (tmp2 << 0);
     SRH &= ~0x0003;
@@ -271,9 +275,18 @@ float SHT2x_MeasureTempPoll(void)
         ack = SHT2x_I2cWriteByte(I2C_ADR_R);
     } while(ACK_ERROR == ack);
     
+    UART1_SendData8('*');
+    while( UART1_GetFlagStatus(UART1_FLAG_TC)==RESET );
+    
     tmp1 = SHT2x_I2cReadByte();
+    UART1_SendData8((unsigned char)tmp1);
+    while( UART1_GetFlagStatus(UART1_FLAG_TC)==RESET );
     SHT2x_I2cAcknowledge();
+    
     tmp2 = SHT2x_I2cReadByte();
+    UART1_SendData8((unsigned char)tmp2);
+    while( UART1_GetFlagStatus(UART1_FLAG_TC)==RESET );
+    
     SHT2x_I2cNoAcknowledge();
     SHT2x_I2cStopCondition();
 
@@ -301,6 +314,9 @@ float SHT2x_MeasureHumiPoll(void)
         ack = SHT2x_I2cWriteByte(I2C_ADR_R);
     } while(ACK_ERROR == ack);
     
+    UART1_SendData8('*');
+    while( UART1_GetFlagStatus(UART1_FLAG_TC)==RESET );
+    
     tmp1 = SHT2x_I2cReadByte();
     SHT2x_I2cAcknowledge();
     tmp2 = SHT2x_I2cReadByte();
@@ -318,7 +334,6 @@ unsigned char SHT2x_ReadUserReg(void)
 {
     unsigned char reg;
 
-    
     SHT2x_I2cStartCondition();                 
     SHT2x_I2cWriteByte(I2C_ADR_W);
     SHT2x_I2cWriteByte(USER_REG_R);
@@ -335,7 +350,6 @@ unsigned char SHT2x_WriteUserReg(unsigned char reg)
 {
     unsigned char ack;
 
-    
     SHT2x_I2cStartCondition();
     SHT2x_I2cWriteByte(I2C_ADR_W);
     SHT2x_I2cWriteByte(USER_REG_W);
@@ -352,7 +366,7 @@ void SHT2x_SoftReset(void)
     SHT2x_I2cWriteByte(SOFT_RESET);
     SHT2x_I2cStopCondition();
 
-    SHT2x_Delay(80);
+    delay_us(80);
 }
 
 void SHT2x_GetSerialNumber(unsigned char *buf)
