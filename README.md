@@ -12,6 +12,7 @@
 |    UART-RX-EXIT     | 2019.06.19 | 2019.06.19 |         串口1接收中断          |
 |        Timer        | 2019.06.21 | 2019.06.21 |        定时器1溢出中断         |
 |        SHT20        | 2019.06.24 | 2019.06.24 |       温湿度传感器SHT20        |
+|       EEPROM        | 2019.07.09 | 2019.07.09 |       读写STM8内部EEPROM       |
 
 
 
@@ -27,4 +28,5 @@ To save the module when developing STM8.
 |    UART-RX-EXIT     | 2019.06.19  | 2019.06.19 |                                                 |
 |        Timer        | 2019.06.21  | 2019.06.21 |             Basic Tim1 update EXIT              |
 |        SHT20        | 2019.06.24  | 2019.06.24 |      Temperature and Humidity sensor SHT20      |
+|       EEPROM        | 2019.07.09  | 2019.07.09 |          Read and write EEPROM in STM8          |
 
