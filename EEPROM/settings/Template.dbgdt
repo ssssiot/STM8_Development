@@ -34,7 +34,7 @@
         
         
       <ShowCodeCoverage>1</ShowCodeCoverage><ShowInstrProfiling>1</ShowInstrProfiling></Disassembly>
-    <WATCH_1><expressions><item>clk_source</item><item>u32_clk_freq</item><item>CLK_CKDIVR</item><item>temp</item><item></item></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>115</item><item>150</item><item>100</item><item>136</item></col-widths></WATCH_1><Register><RegFindHistory/></Register></Static>
+    <WATCH_1><expressions><item>clk_source</item><item>u32_clk_freq</item><item>CLK_CKDIVR</item><item>temp</item><item/></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>115</item><item>150</item><item>100</item><item>136</item></col-widths></WATCH_1><Register><RegFindHistory/></Register></Static>
     <Windows>
       
       
